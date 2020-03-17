@@ -30,7 +30,6 @@ class Parser(AbsParser):
         required=False,
         choices=None,
         default=None,
-        action=None,
     ):
         """ Add a parameter to the parser
 
@@ -42,7 +41,6 @@ class Parser(AbsParser):
             required (bool): Whether or not the param may be omitted
             choices (container): A container of the allowable values for the argument
             default: The value produced if the argument is absent from the params
-            action (callable): The basic type of action to be taken when this argument is encountered
         """
 
         # Check type

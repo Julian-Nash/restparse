@@ -23,7 +23,6 @@ class AbsParser(abc.ABC):
         required=False,
         choices=None,
         default=None,
-        action=None,
     ):
         pass
 

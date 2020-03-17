@@ -161,3 +161,28 @@ def form_payload():
 
     return redirect(url_for("index"))
 ```
+
+### `add_param()`
+
+```py3
+parser.add_param(
+    "name",
+    type=str,
+    dest="new_name",
+    description="A description of the param",
+    required=True,
+    choices=["foo", "bar"]
+)
+```
+
+_options:_
+
+```
+name (str): The parameter name
+type (type): The type to which the parser should expect
+dest (str): The name of the attribute to be added to the object returned by parse_params()
+description (str): A description of the param
+required (bool): Whether or not the param may be omitted
+choices (container): A container of the allowable values for the argument
+default: The value produced if the argument is absent from the params
+```
