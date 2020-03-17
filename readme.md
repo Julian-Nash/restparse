@@ -1,5 +1,7 @@
 # `Python parser for RESTful HTTP requests`
 
+_`Python 3.6` +_
+
 A simple, lightweight parser for RESTful HTTP request data.
 
 Example usage:
