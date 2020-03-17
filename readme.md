@@ -1,8 +1,8 @@
 # `Python parser for RESTful HTTP requests`
 
-_`Python 3.6` +_
+![Python package](https://github.com/Julian-Nash/restparse/workflows/Python%20package/badge.svg?branch=master)  
 
-A simple, lightweight parser for RESTful HTTP request data.
+A simple, lightweight parser for RESTful HTTP request data. `Python 3.6+`
 
 Example usage:
 
