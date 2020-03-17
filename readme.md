@@ -1,4 +1,4 @@
-# 'Python parser for RESTful HTTP requests'
+# `Python parser for RESTful HTTP requests`
 
 A simple, lightweight parser for RESTful HTTP request data.
 
