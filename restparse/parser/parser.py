@@ -65,7 +65,11 @@ class Parser(AbsParser):
         params = Params()
 
         for name, arg in self.params.items():
+
             value = data.get(arg.name, None)
+
+            if not value:
+                value = None
 
             # Check required
             if arg.required and value is None:
@@ -76,7 +80,7 @@ class Parser(AbsParser):
                 raise ParserInvalidChoiceError(f"Value '{value}' not in choices")
 
             # Check value type
-            if arg.type and type(value) != arg.type:
+            if value and arg.type and type(value) != arg.type:
                 try:
                     arg.type(value)
                 except Exception:

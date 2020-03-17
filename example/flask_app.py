@@ -1,65 +1,10 @@
-# `Python parser for RESTful HTTP requests`
-
-A simple, lightweight parser for RESTful HTTP request data.
-
-Example usage:
-
-```py3
+from flask import Flask, request, jsonify, redirect, url_for
 from restparse.parser import Parser
 
 
-parser = Parser(description="RESTful parameter parser")
+app = Flask(__name__)
 
-parser.add_param(
-    name="name",
-    type=str,
-    description="The users name",
-    required=True
-)
-parser.add_param(
-    name="age",
-    type=int,
-    description="The users age",
-    required=True
-)
-parser.add_param(
-    name="online",
-    type=bool,
-    description="Is the user online?",
-    default=False
-)
-parser.add_param(
-    name="height",
-    type=float,
-    description="The users height",
-)
-parser.add_param(
-    name="tags",
-    description="Tags",
-)
 
-payload = {
-    "name": "John Doe",
-    "age": "40",
-    "online": False,
-    "height": 6.2,
-    "tags": ["python", "javascript"]
-}
-
-params = parser.parse_params(payload)
-
-print(params.name)  # John Doe
-print(params.tags)  # ['python', 'javascript']
-
-print(params.to_dict())  # {'name': 'John Doe', 'age': 40, 'online': False, 'height': 6.2, 'tags': ['python', 'javascript']}
-
-```
-
-### `Usage with Flask`
-
-Parsing query strings:
-
-```py3
 @app.route("/")
 def index():
     """ Parsing query strings """
@@ -88,11 +33,8 @@ def index():
     print(params.search)
 
     return f"Params = from: {params.q_from}, to: {params.q_to}, search: {params.search}"
-```
 
-Parsing request payloads:
 
-```py3
 @app.route("/json", methods=["POST"])
 def json_payload():
     """ Parsing request payloads """
@@ -123,11 +65,8 @@ def json_payload():
     print(params.tags)
 
     return jsonify(params.to_dict())
-```
 
-Parsing form data:
 
-```py3
 @app.route("/form", methods=["POST"])
 def form_payload():
     """ Parsing form data """
@@ -152,4 +91,7 @@ def form_payload():
     print(params.age)
 
     return redirect(url_for("index"))
-```
+
+
+if __name__ == "__main__":
+    app.run()

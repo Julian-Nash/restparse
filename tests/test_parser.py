@@ -141,6 +141,19 @@ class TestParser(unittest.TestCase):
 
         self.assertEqual("bar", params.foo)
 
+    def test_empty_value(self):
+
+        parser = Parser()
+
+        parser.add_param(
+            "foo",
+            type=int,
+            description="Query from"
+        )
+        params = parser.parse_params({'foo': ''})
+
+        self.assertEqual(params.foo, None)
+
 
 if __name__ == "__main__":
     unittest.main()
