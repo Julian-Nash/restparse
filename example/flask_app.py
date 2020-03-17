@@ -11,21 +11,9 @@ def index():
 
     parser = Parser(description="Parsing query strings")
 
-    parser.add_param(
-        "q_from",
-        type=int,
-        description="Query from"
-    )
-    parser.add_param(
-        "q_to",
-        type=int,
-        description="Query to"
-    )
-    parser.add_param(
-        "search",
-        type=str,
-        description="Search query"
-    )
+    parser.add_param("q_from", type=int, description="Query from")
+    parser.add_param("q_to", type=int, description="Query to")
+    parser.add_param("search", type=str, description="Search query")
     params = parser.parse_params(request.args)
 
     print(params.q_from)
@@ -41,23 +29,9 @@ def json_payload():
 
     parser = Parser(description="Parsing a request payload")
 
-    parser.add_param(
-        "name",
-        type=str,
-        description="The users name",
-        required=True
-    )
-    parser.add_param(
-        "age",
-        type=int,
-        description="The users age",
-        required=True
-    )
-    parser.add_param(
-        "tags",
-        type=list,
-        description="Tags"
-    )
+    parser.add_param("name", type=str, description="The users name", required=True)
+    parser.add_param("age", type=int, description="The users age", required=True)
+    parser.add_param("tags", type=list, description="Tags")
     params = parser.parse_params(request.get_json())
 
     print(params.name)
@@ -73,18 +47,8 @@ def form_payload():
 
     parser = Parser(description="Parsing form data")
 
-    parser.add_param(
-        "name",
-        type=str,
-        description="The users name",
-        required=True
-    )
-    parser.add_param(
-        "age",
-        type=int,
-        description="The users age",
-        required=True
-    )
+    parser.add_param("name", type=str, description="The users name", required=True)
+    parser.add_param("age", type=int, description="The users age", required=True)
     params = parser.parse_params(request.form)
 
     print(params.name)

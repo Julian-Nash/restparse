@@ -5,7 +5,7 @@ from .exceptions import (
     ParserParamRequiredError,
     ParserTypeError,
     ParserInvalidChoiceError,
-    ParamNotFoundError
+    ParamNotFoundError,
 )
 
 
@@ -21,9 +21,17 @@ class Parser(AbsParser):
         """
         super().__init__(description=description, allowed_types=allowed_types)
 
-    def add_param(self,
-                  name,
-                  type=None, dest=None, description=None, required=False, choices=None, default=None, action=None):
+    def add_param(
+        self,
+        name,
+        type=None,
+        dest=None,
+        description=None,
+        required=False,
+        choices=None,
+        default=None,
+        action=None,
+    ):
         """ Add a parameter to the parser
 
         Args:
@@ -46,7 +54,9 @@ class Parser(AbsParser):
             try:
                 default = type(default)
             except ValueError:
-                raise ParserTypeError(f"Invalid default value type '{type}' for param {name}")
+                raise ParserTypeError(
+                    f"Invalid default value type '{type}' for param {name}"
+                )
 
         a = Param(
             name,
@@ -55,7 +65,7 @@ class Parser(AbsParser):
             description=description,
             required=required,
             default=default,
-            choices=choices
+            choices=choices,
         )
         self.params[name] = a
 
@@ -84,7 +94,9 @@ class Parser(AbsParser):
                 try:
                     arg.type(value)
                 except Exception:
-                    raise ParserTypeError(f"Incorrect type ({type(value)}) for {arg.name}")
+                    raise ParserTypeError(
+                        f"Incorrect type ({type(value)}) for {arg.name}"
+                    )
 
             # Set the parser attribute
             if arg.default and not value:

@@ -1,5 +1,6 @@
 class Params(object):
     """ Params object """
+
     params = []
 
     def to_dict(self):

@@ -4,7 +4,16 @@ from .abs_param import AbsParam
 class Param(AbsParam):
     """ Concrete Param """
 
-    def __init__(self, name, type=None, dest=None, description=None, required=False, default=None, choices=None):
+    def __init__(
+        self,
+        name,
+        type=None,
+        dest=None,
+        description=None,
+        required=False,
+        default=None,
+        choices=None,
+    ):
         """ Returns a new instance of Arg:
 
         Args:
@@ -24,5 +33,5 @@ class Param(AbsParam):
             description=description,
             required=required,
             default=default,
-            choices=choices
+            choices=choices,
         )

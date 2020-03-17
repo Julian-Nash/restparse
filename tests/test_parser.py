@@ -4,7 +4,7 @@ from restparse.parser import Parser
 from restparse.parser.exceptions import (
     ParserParamRequiredError,
     ParserTypeError,
-    ParserInvalidChoiceError
+    ParserInvalidChoiceError,
 )
 
 
@@ -16,8 +16,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=str,
+            name="foo", type=str,
         )
         params = parser.parse_params({"foo": "bar"})
 
@@ -27,8 +26,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=int,
+            name="foo", type=int,
         )
         params = parser.parse_params({"foo": 1})
 
@@ -38,8 +36,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=float,
+            name="foo", type=float,
         )
         params = parser.parse_params({"foo": 1.5})
 
@@ -49,8 +46,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=list,
+            name="foo", type=list,
         )
         params = parser.parse_params({"foo": [1, 2, 3]})
 
@@ -60,8 +56,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=dict,
+            name="foo", type=dict,
         )
         params = parser.parse_params({"foo": {"foo": 1}})
 
@@ -71,8 +66,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser(description=self.description)
         parser.add_param(
-            name="foo",
-            type=None,
+            name="foo", type=None,
         )
         params = parser.parse_params({"foo": None})
 
@@ -82,11 +76,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            name="foo",
-            type=str,
-            required=True
-        )
+        parser.add_param(name="foo", type=str, required=True)
 
         with self.assertRaises(ParserParamRequiredError):
             params = parser.parse_params({"bar": "baz"})
@@ -95,10 +85,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            name="foo",
-            choices=["bar", "baz"]
-        )
+        parser.add_param(name="foo", choices=["bar", "baz"])
 
         with self.assertRaises(ParserInvalidChoiceError):
             params = parser.parse_params({"foo": 1})
@@ -107,10 +94,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            name="foo",
-            dest="bar"
-        )
+        parser.add_param(name="foo", dest="bar")
 
         params = parser.parse_params({"foo": "baz"})
 
@@ -120,10 +104,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            name="foo",
-            type=int
-        )
+        parser.add_param(name="foo", type=int)
 
         with self.assertRaises(ParserTypeError):
             params = parser.parse_params({"foo": "bar"})
@@ -132,11 +113,7 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            name="foo",
-            type=str,
-            default="bar"
-        )
+        parser.add_param(name="foo", type=str, default="bar")
         params = parser.parse_params({})
 
         self.assertEqual("bar", params.foo)
@@ -145,12 +122,8 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
 
-        parser.add_param(
-            "foo",
-            type=int,
-            description="Query from"
-        )
-        params = parser.parse_params({'foo': ''})
+        parser.add_param("foo", type=int, description="Query from")
+        params = parser.parse_params({"foo": ""})
 
         self.assertEqual(params.foo, None)
 

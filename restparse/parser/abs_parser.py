@@ -14,7 +14,17 @@ class AbsParser(abc.ABC):
             self.allowed_types = allowed_types
 
     @abc.abstractmethod
-    def add_param(self, name, type=None, dest=None, description=None, required=False, choices=None, default=None, action=None):
+    def add_param(
+        self,
+        name,
+        type=None,
+        dest=None,
+        description=None,
+        required=False,
+        choices=None,
+        default=None,
+        action=None,
+    ):
         pass
 
     @abc.abstractmethod
@@ -40,9 +50,15 @@ Optional:
 
         for param in self.params.values():
             if param.required:
-                required.append(f"{param.name} ({str(param.type)}): {param.description}")
+                required.append(
+                    f"{param.name} ({str(param.type)}): {param.description}"
+                )
             else:
                 optional.append(f"{param.name} ({param.type}): {param.description}")
 
         t = Template(r)
-        return t.substitute(description=self.description, required="\n".join(required), optional="\n".join(optional))
+        return t.substitute(
+            description=self.description,
+            required="\n".join(required),
+            optional="\n".join(optional),
+        )
