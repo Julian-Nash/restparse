@@ -4,7 +4,13 @@
 
 A simple, lightweight parser for RESTful HTTP request data. `Python 3.6+`
 
-Example usage:
+_Installation_
+
+```sh
+pip install restparse
+```
+
+_Example usage:_
 
 ```py3
 from restparse.parser import Parser
@@ -59,7 +65,7 @@ print(params.to_dict())  # {'name': 'John Doe', 'age': 40, 'online': False, 'hei
 
 ### `Usage with Flask`
 
-Parsing query strings:
+_Parsing query strings:_
 
 ```py3
 @app.route("/")
@@ -92,7 +98,7 @@ def index():
     return f"Params = from: {params.q_from}, to: {params.q_to}, search: {params.search}"
 ```
 
-Parsing request payloads:
+_Parsing request payloads:_
 
 ```py3
 @app.route("/json", methods=["POST"])
@@ -127,7 +133,7 @@ def json_payload():
     return jsonify(params.to_dict())
 ```
 
-Parsing form data:
+_Parsing form data:_
 
 ```py3
 @app.route("/form", methods=["POST"])
