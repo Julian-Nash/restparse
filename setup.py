@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="restparse",
-    version="1.2",
+    version="0.0.1",
     packages=setuptools.find_packages(),
     author="Julian Nash",
     author_email="julianjamesnash@gmail.com",
