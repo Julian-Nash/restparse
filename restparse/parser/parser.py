@@ -5,7 +5,7 @@ from .exceptions import (
     ParserParamRequiredError,
     ParserTypeError,
     ParserInvalidChoiceError,
-    ParamNotFoundError,
+    DuplicateParamError
 )
 
 
@@ -19,7 +19,15 @@ class Parser(AbsParser):
             description (str): A description of the parser (None)
             allowed_types (list): A list of allowed types (str, int, float, list, dict, bool, None)
         """
-        super().__init__(description=description, allowed_types=allowed_types)
+        super().__init__(description=description)
+        self.params = {}
+        if allowed_types:
+            if not type(allowed_types) in (list, set, tuple):
+                raise TypeError(f"Allowed types must be list, set or tuple, not {type(allowed_types)}")
+            else:
+                self.allowed_types = allowed_types
+        else:
+            self.allowed_types = {str, int, float, list, dict, bool, None}
 
     def add_param(
         self,
@@ -56,6 +64,7 @@ class Parser(AbsParser):
                     f"Invalid default value type '{type}' for param {name}"
                 )
 
+        # Create a new Param and add it to the self.params dict {name: Param}
         a = Param(
             name,
             type=type,
@@ -65,12 +74,19 @@ class Parser(AbsParser):
             default=default,
             choices=choices,
         )
-        self.params[name] = a
 
-    def parse_params(self, data):
+        if name in self.params:
+            raise DuplicateParamError(f"Duplicate parameter '{name}'")
+        else:
+            self.params[name] = a
+
+    def parse_params(self, data=None):
         """ Parse a dict """
 
         params = Params()
+
+        if not data:
+            data = {}
 
         for name, arg in self.params.items():
 
@@ -79,13 +95,14 @@ class Parser(AbsParser):
             if not value:
                 value = None
 
+            # Check choices
+            if arg.choices:
+                if value not in arg.choices and value is not None:
+                    raise ParserInvalidChoiceError(f"Value '{value}' not in choices")
+
             # Check required
             if arg.required and value is None:
                 raise ParserParamRequiredError(f"Missing required value for {arg.name}")
-
-            # Check value in choices
-            if arg.choices and value not in arg.choices:
-                raise ParserInvalidChoiceError(f"Value '{value}' not in choices")
 
             # Check value type
             if value and arg.type and type(value) != arg.type:
@@ -100,21 +117,14 @@ class Parser(AbsParser):
             if arg.default and not value:
                 setattr(self, arg.name, arg.default)
                 setattr(params, arg.name, arg.default)
-                params.params.append(arg.name)
+                params.add_param(arg.name)
             elif arg.dest:
                 setattr(self, arg.dest, value)
                 setattr(params, arg.dest, value)
-                params.params.append(arg.dest)
+                params.add_param(arg.name)
             else:
                 setattr(self, arg.name, value)
                 setattr(params, arg.name, value)
-                params.params.append(arg.name)
+                params.add_param(arg.name)
 
         return params
-
-    def get_param(self, name):
-        """ Get a param, returns a Param object """
-        try:
-            return getattr(self, name)
-        except AttributeError:
-            raise ParamNotFoundError(f"Param {name} not found")

@@ -5,26 +5,51 @@ from restparse.parser.exceptions import (
     ParserParamRequiredError,
     ParserTypeError,
     ParserInvalidChoiceError,
+    DuplicateParamError
 )
 
 
 class TestParser(unittest.TestCase):
 
-    description = "Test description"
+    def test_empty_parser(self):
+
+        parser = Parser()
+        parser.add_param(
+            "name",
+            type=str,
+        )
+        params = parser.parse_params({})
+
+        self.assertEqual(params.to_dict(), {"name": None})
+
+    def test_duplicate_param(self):
+
+        parser = Parser()
+        parser.add_param(
+            "duplicate",
+            type=str,
+        )
+
+        with self.assertRaises(DuplicateParamError):
+            parser.add_param(
+                "duplicate",
+                type=str,
+            )
 
     def test_str_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
-            name="foo", type=str,
+            name="idea",
+            type=str,
         )
-        params = parser.parse_params({"foo": "bar"})
+        params = parser.parse_params({"idea": "bar"})
 
-        self.assertEqual("bar", params.foo)
+        self.assertEqual(params.idea, "bar")
 
     def test_int_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
             name="foo", type=int,
         )
@@ -34,7 +59,7 @@ class TestParser(unittest.TestCase):
 
     def test_float_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
             name="foo", type=float,
         )
@@ -44,7 +69,7 @@ class TestParser(unittest.TestCase):
 
     def test_list_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
             name="foo", type=list,
         )
@@ -54,19 +79,21 @@ class TestParser(unittest.TestCase):
 
     def test_dict_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
-            name="foo", type=dict,
+            name="data",
+            type=dict,
         )
-        params = parser.parse_params({"foo": {"foo": 1}})
+        params = parser.parse_params({"data": {"foo": "bar"}})
 
-        self.assertEqual({"foo": 1}, params.foo)
+        self.assertEqual(params.data, {'foo': 'bar'})
 
     def test_none_parser(self):
 
-        parser = Parser(description=self.description)
+        parser = Parser()
         parser.add_param(
-            name="foo", type=None,
+            name="foo",
+            type=None,
         )
         params = parser.parse_params({"foo": None})
 
@@ -89,6 +116,17 @@ class TestParser(unittest.TestCase):
 
         with self.assertRaises(ParserInvalidChoiceError):
             params = parser.parse_params({"foo": 1})
+
+    def test_choice_not(self):
+
+        parser = Parser()
+
+        parser.add_param(
+            name="scanner",
+            choices=["kiuwan", "burpsuite"],
+        )
+
+        parser.parse_params({"foo": "bar"})
 
     def test_dest(self):
 

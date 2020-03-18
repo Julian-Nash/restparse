@@ -5,13 +5,8 @@ import abc
 class AbsParser(abc.ABC):
     """ Parser abstract base class """
 
-    params = {}
-    allowed_types = (str, int, float, list, dict, bool, None)
-
-    def __init__(self, description=None, allowed_types=None):
+    def __init__(self, description=None):
         self.description = description
-        if allowed_types:
-            self.allowed_types = allowed_types
 
     @abc.abstractmethod
     def add_param(
@@ -28,10 +23,6 @@ class AbsParser(abc.ABC):
 
     @abc.abstractmethod
     def parse_params(self, data):
-        pass
-
-    @abc.abstractmethod
-    def get_param(self, name):
         pass
 
     def help(self):
