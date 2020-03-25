@@ -1,8 +1,5 @@
-from .abs_param import AbsParam
-
-
-class Param(AbsParam):
-    """ Concrete Param """
+class Param(object):
+    """ Param class """
 
     def __init__(
         self,
@@ -15,7 +12,7 @@ class Param(AbsParam):
         choices=None,
         sanitize=False
     ):
-        """ Returns a new instance of Arg:
+        """ Returns a new instance of Param:
 
         Args:
              name (str): The parameter name
@@ -27,13 +24,11 @@ class Param(AbsParam):
             default: A default value for the param
             choices (list): A list of available choices
         """
-        super().__init__(
-            name,
-            type=type,
-            dest=dest,
-            description=description,
-            required=required,
-            default=default,
-            choices=choices,
-            sanitize=sanitize
-        )
+        self.name = name
+        self.type = type
+        self.dest = dest
+        self.description = description
+        self.required = required
+        self.default = default
+        self.choices = choices
+        self.sanitize = sanitize

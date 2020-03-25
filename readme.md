@@ -18,30 +18,30 @@ from restparse.parser import Parser
 
 parser = Parser(description="RESTful parameter parser")
 
-parser.add_param(
+parser._add_param(
     name="name",
     type=str,
     description="The users name",
     required=True
 )
-parser.add_param(
+parser._add_param(
     name="age",
     type=int,
     description="The users age",
     required=True
 )
-parser.add_param(
+parser._add_param(
     name="online",
     type=bool,
     description="Is the user online?",
     default=False
 )
-parser.add_param(
+parser._add_param(
     name="height",
     type=float,
     description="The users height",
 )
-parser.add_param(
+parser._add_param(
     name="tags",
     description="Tags",
 )
@@ -74,17 +74,17 @@ def index():
 
     parser = Parser(description="Parsing query strings")
 
-    parser.add_param(
+    parser._add_param(
         "q_from",
         type=int,
         description="Query from"
     )
-    parser.add_param(
+    parser._add_param(
         "q_to",
         type=int,
         description="Query to"
     )
-    parser.add_param(
+    parser._add_param(
         "search",
         type=str,
         description="Search query"
@@ -107,19 +107,19 @@ def json_payload():
 
     parser = Parser(description="Parsing a request payload")
 
-    parser.add_param(
+    parser._add_param(
         "name",
         type=str,
         description="The users name",
         required=True
     )
-    parser.add_param(
+    parser._add_param(
         "age",
         type=int,
         description="The users age",
         required=True
     )
-    parser.add_param(
+    parser._add_param(
         "tags",
         type=list,
         description="Tags"
@@ -142,13 +142,13 @@ def form_payload():
 
     parser = Parser(description="Parsing form data")
 
-    parser.add_param(
+    parser._add_param(
         "name",
         type=str,
         description="The users name",
         required=True
     )
-    parser.add_param(
+    parser._add_param(
         "age",
         type=int,
         description="The users age",
@@ -162,10 +162,10 @@ def form_payload():
     return redirect(url_for("index"))
 ```
 
-### `add_param()`
+### `_add_param()`
 
 ```py3
-parser.add_param(
+parser._add_param(
     "name",
     type=str,
     dest="new_name",

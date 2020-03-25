@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, redirect, url_for
 from restparse.parser import Parser
 
-
 app = Flask(__name__)
 
 
@@ -29,8 +28,12 @@ def json_payload():
 
     parser = Parser(description="Parsing a request payload")
 
-    parser.add_param("name", type=str, description="The users name", required=True)
-    parser.add_param("age", type=int, description="The users age", required=True)
+    parser.add_param(
+        "name", type=str, description="The users name", required=True
+    )
+    parser.add_param(
+        "age", type=int, description="The users age", required=True
+    )
     parser.add_param("tags", type=list, description="Tags")
     params = parser.parse_params(request.get_json())
 
@@ -47,8 +50,12 @@ def form_payload():
 
     parser = Parser(description="Parsing form data")
 
-    parser.add_param("name", type=str, description="The users name", required=True)
-    parser.add_param("age", type=int, description="The users age", required=True)
+    parser.add_param(
+        "name", type=str, description="The users name", required=True
+    )
+    parser.add_param(
+        "age", type=int, description="The users age", required=True
+    )
     params = parser.parse_params(request.form)
 
     print(params.name)

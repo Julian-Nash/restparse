@@ -4,7 +4,7 @@ class Params(object):
     def __init__(self):
         self._params = set()
 
-    def add_param(self, name):
+    def _add_param(self, name):
         self._params.add(name)
 
     def to_dict(self):

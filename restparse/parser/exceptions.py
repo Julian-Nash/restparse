@@ -19,5 +19,5 @@ class ParamNotFoundError(KeyError):
 
 
 class DuplicateParamError(Exception):
-    """ Raised when a duplicate parameter is added to add_param() """
+    """ Raised when a duplicate parameter is added to _add_param() """
     ...

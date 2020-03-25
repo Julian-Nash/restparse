@@ -2,9 +2,7 @@ import unittest
 
 from restparse.parser import Parser
 from restparse.parser.exceptions import (
-    ParserParamRequiredError,
-    ParserTypeError,
-    ParserInvalidChoiceError,
+    ParserParamRequiredError, ParserTypeError, ParserInvalidChoiceError,
     DuplicateParamError
 )
 
@@ -16,26 +14,25 @@ class TestParser(unittest.TestCase):
     def test_sanitize_str(self):
 
         parser = Parser(sanitizer=bleach.clean)
-        parser.add_param(
-            "data",
-            type=str,
-            sanitize=True
-        )
+        parser.add_param("data", type=str, sanitize=True)
         params = parser.parse_params({"data": "<script>alert('xss')</script>"})
 
-        self.assertEqual(params.data, "&lt;script&gt;alert('xss')&lt;/script&gt;")
+        self.assertEqual(
+            params.data, "&lt;script&gt;alert('xss')&lt;/script&gt;"
+        )
 
     def test_sanitize_list(self):
 
         parser = Parser(sanitizer=bleach.clean)
-        parser.add_param(
-            "data",
-            type=list,
-            sanitize=True
+        parser.add_param("data", type=list, sanitize=True)
+        params = parser.parse_params(
+            {"data": [1, 2, 3, "<script>alert('xss')</script>", [5]]}
         )
-        params = parser.parse_params({"data": [1, 2, 3, "<script>alert('xss')</script>", [5]]})
 
-        self.assertEqual(params.data, [1, 2, 3, "&lt;script&gt;alert('xss')&lt;/script&gt;", [5]])
+        self.assertEqual(
+            params.data,
+            [1, 2, 3, "&lt;script&gt;alert('xss')&lt;/script&gt;", [5]]
+        )
 
     def test_empty_parser(self):
 
@@ -77,7 +74,8 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
         parser.add_param(
-            name="foo", type=int,
+            name="foo",
+            type=int,
         )
         params = parser.parse_params({"foo": 1})
 
@@ -87,7 +85,8 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
         parser.add_param(
-            name="foo", type=float,
+            name="foo",
+            type=float,
         )
         params = parser.parse_params({"foo": 1.5})
 
@@ -97,7 +96,8 @@ class TestParser(unittest.TestCase):
 
         parser = Parser()
         parser.add_param(
-            name="foo", type=list,
+            name="foo",
+            type=list,
         )
         params = parser.parse_params({"foo": [1, 2, 3]})
 

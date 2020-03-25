@@ -1,18 +1,16 @@
-from .abs_parser import AbsParser
 from .param import Param
 from .params import Params
 from .exceptions import (
-    ParserParamRequiredError,
-    ParserTypeError,
-    ParserInvalidChoiceError,
+    ParserParamRequiredError, ParserTypeError, ParserInvalidChoiceError,
     DuplicateParamError
 )
 
 import json
+from string import Template
 
 
-class Parser(AbsParser):
-    """ Concrete Parser """
+class Parser(object):
+    """ Parser class """
 
     def __init__(self, description=None, allowed_types=None, sanitizer=None):
         """ Returns an instance of Parser
@@ -22,22 +20,21 @@ class Parser(AbsParser):
             allowed_types (list): A list of allowed types (str, int, float, list, dict, bool, None)
             sanitizer (callable): A string sanitizer
         """
-        super().__init__(description=description)
-
+        self.description = description
+        self.allowed_types = allowed_types or (
+            str, int, float, list, dict, bool, None
+        )
+        self.sanitizer = sanitizer
         self.params = {}
 
         if allowed_types:
             if not type(allowed_types) in (list, set, tuple):
-                raise TypeError(f"Allowed types must be list, set or tuple, not {type(allowed_types)}")
-            else:
-                self.allowed_types = allowed_types
-        else:
-            self.allowed_types = {str, int, float, list, dict, bool, None}
+                raise TypeError(
+                    f"Allowed types must be list, set or tuple, not {type(allowed_types)}"
+                )
 
         if sanitizer and not callable(sanitizer):
             raise TypeError("param for sanitizer is not callable")
-        else:
-            self.sanitizer = sanitizer
 
     def add_param(
         self,
@@ -111,11 +108,15 @@ class Parser(AbsParser):
             # Check choices
             if param.choices:
                 if value not in param.choices and value is not None:
-                    raise ParserInvalidChoiceError(f"Parameter '{value}' not in choices")
+                    raise ParserInvalidChoiceError(
+                        f"Parameter '{value}' not in choices"
+                    )
 
             # Check required
             if param.required and value is None:
-                raise ParserParamRequiredError(f"Missing required parameter '{param.name}'")
+                raise ParserParamRequiredError(
+                    f"Missing required parameter '{param.name}'"
+                )
 
             # Check value type
             if value and param.type and type(value) != param.type:
@@ -131,18 +132,45 @@ class Parser(AbsParser):
                 if not type(value) in (int, float, None):
                     value = json.loads(self.sanitizer(json.dumps(value)))
 
-            # Set the parser attribute
+            # Set the params attribute
             if param.default and not value:
-                setattr(self, param.name, param.default)
                 setattr(params, param.name, param.default)
-                params.add_param(param.name)
+                params._add_param(param.name)
             elif param.dest:
-                setattr(self, param.dest, value)
                 setattr(params, param.dest, value)
-                params.add_param(param.name)
+                params._add_param(param.name)
             else:
-                setattr(self, param.name, value)
                 setattr(params, param.name, value)
-                params.add_param(param.name)
+                params._add_param(param.name)
 
         return params
+
+    def help(self):
+        r = f"""$description
+
+Args:
+\t$required
+
+Optional:
+\t$optional
+
+            """
+        required = []
+        optional = []
+
+        for param in self.params.values():
+            if param.required:
+                required.append(
+                    f"{param.name} ({str(param.type)}): {param.description}"
+                )
+            else:
+                optional.append(
+                    f"{param.name} ({param.type}): {param.description}"
+                )
+
+        t = Template(r)
+        return t.substitute(
+            description=self.description,
+            required="\n".join(required),
+            optional="\n".join(optional),
+        )

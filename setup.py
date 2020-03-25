@@ -9,7 +9,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     author="Julian Nash",
     author_email="julianjamesnash@gmail.com",
-    description="A simple, lightweight parser and validator for RESTful HTTP requests",
+    description=
+    "A simple, lightweight parser and validator for RESTful HTTP requests",
     long_description=long_description,
     long_description_content_type='text/markdown',
     keywords="flask django request parser json rest",
@@ -25,5 +26,5 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-      ],
+    ],
 )
