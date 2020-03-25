@@ -1,38 +1,40 @@
-import unittest
-
 from restparse.parser import Parser
 from restparse.parser.exceptions import (
     ParserParamRequiredError, ParserTypeError, ParserInvalidChoiceError,
     DuplicateParamError
 )
 
-import bleach
+import unittest
 
 
 class TestParser(unittest.TestCase):
 
-    def test_sanitize_str(self):
+    def test_param_action_with_string_method(self):
 
-        parser = Parser(sanitizer=bleach.clean)
-        parser.add_param("data", type=str, sanitize=True)
-        params = parser.parse_params({"data": "<script>alert('xss')</script>"})
+        def upper(s):
+            return s.upper()
 
-        self.assertEqual(
-            params.data, "&lt;script&gt;alert('xss')&lt;/script&gt;"
+        parser = Parser()
+        parser.add_param(
+            "name",
+            type=str,
+            action=upper
         )
+        params = parser.parse_params({"name": "bob"})
 
-    def test_sanitize_list(self):
+        self.assertEqual(params.name, "BOB")
 
-        parser = Parser(sanitizer=bleach.clean)
-        parser.add_param("data", type=list, sanitize=True)
-        params = parser.parse_params(
-            {"data": [1, 2, 3, "<script>alert('xss')</script>", [5]]}
+    def test_param_action_cast_str_to_int(self):
+
+        parser = Parser()
+        parser.add_param(
+            "number",
+            type=str,
+            action=int
         )
+        params = parser.parse_params({"number": "1"})
 
-        self.assertEqual(
-            params.data,
-            [1, 2, 3, "&lt;script&gt;alert('xss')&lt;/script&gt;", [5]]
-        )
+        self.assertEqual(params.number, 1)
 
     def test_empty_parser(self):
 

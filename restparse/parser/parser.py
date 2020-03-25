@@ -12,19 +12,17 @@ from string import Template
 class Parser(object):
     """ Parser class """
 
-    def __init__(self, description=None, allowed_types=None, sanitizer=None):
+    def __init__(self, description=None, allowed_types=None):
         """ Returns an instance of Parser
 
         Args:
             description (str): A description of the parser (None)
             allowed_types (list): A list of allowed types (str, int, float, list, dict, bool, None)
-            sanitizer (callable): A string sanitizer
         """
         self.description = description
         self.allowed_types = allowed_types or (
             str, int, float, list, dict, bool, None
         )
-        self.sanitizer = sanitizer
         self.params = {}
 
         if allowed_types:
@@ -32,9 +30,6 @@ class Parser(object):
                 raise TypeError(
                     f"Allowed types must be list, set or tuple, not {type(allowed_types)}"
                 )
-
-        if sanitizer and not callable(sanitizer):
-            raise TypeError("param for sanitizer is not callable")
 
     def add_param(
         self,
@@ -45,7 +40,7 @@ class Parser(object):
         required=False,
         choices=None,
         default=None,
-        sanitize=False
+        action=None
     ):
         """ Add a parameter to the parser
 
@@ -57,7 +52,7 @@ class Parser(object):
             required (bool): Whether or not the param may be omitted
             choices (container): A container of the allowable values for the argument
             default: The value produced if the argument is absent from the params
-            sanitize (bool): If true, sanitize the input
+            action (callable): An action to perform on the value at the start of parsing, must be a callable
         """
 
         # Check type
@@ -82,7 +77,7 @@ class Parser(object):
             required=required,
             default=default,
             choices=choices,
-            sanitize=sanitize
+            action=action
         )
 
         if name in self.params:
@@ -105,6 +100,9 @@ class Parser(object):
             if not value:
                 value = None
 
+            if param.action:
+                value = param.action(value)
+
             # Check choices
             if param.choices:
                 if value not in param.choices and value is not None:
@@ -126,11 +124,6 @@ class Parser(object):
                     raise ParserTypeError(
                         f"Incorrect type ({type(value)}) for {param.name}"
                     )
-
-            # Sanitize values
-            if self.sanitizer and param.sanitize:
-                if not type(value) in (int, float, None):
-                    value = json.loads(self.sanitizer(json.dumps(value)))
 
             # Set the params attribute
             if param.default and not value:

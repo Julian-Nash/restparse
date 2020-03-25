@@ -10,7 +10,7 @@ class Param(object):
         required=False,
         default=None,
         choices=None,
-        sanitize=False
+        action=None
     ):
         """ Returns a new instance of Param:
 
@@ -23,6 +23,7 @@ class Param(object):
             required (bool): If True, the parser will require the param
             default: A default value for the param
             choices (list): A list of available choices
+            action (callable): An action to perform on the value at the start of parsing, must be a callable
         """
         self.name = name
         self.type = type
@@ -31,4 +32,4 @@ class Param(object):
         self.required = required
         self.default = default
         self.choices = choices
-        self.sanitize = sanitize
+        self.action = action
