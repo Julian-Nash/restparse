@@ -8,19 +8,24 @@ from .exceptions import (
     DuplicateParamError
 )
 
+import json
+
 
 class Parser(AbsParser):
     """ Concrete Parser """
 
-    def __init__(self, description=None, allowed_types=None):
+    def __init__(self, description=None, allowed_types=None, sanitizer=None):
         """ Returns an instance of Parser
 
         Args:
             description (str): A description of the parser (None)
             allowed_types (list): A list of allowed types (str, int, float, list, dict, bool, None)
+            sanitizer (callable): A string sanitizer
         """
         super().__init__(description=description)
+
         self.params = {}
+
         if allowed_types:
             if not type(allowed_types) in (list, set, tuple):
                 raise TypeError(f"Allowed types must be list, set or tuple, not {type(allowed_types)}")
@@ -28,6 +33,11 @@ class Parser(AbsParser):
                 self.allowed_types = allowed_types
         else:
             self.allowed_types = {str, int, float, list, dict, bool, None}
+
+        if sanitizer and not callable(sanitizer):
+            raise TypeError("param for sanitizer is not callable")
+        else:
+            self.sanitizer = sanitizer
 
     def add_param(
         self,
@@ -38,6 +48,7 @@ class Parser(AbsParser):
         required=False,
         choices=None,
         default=None,
+        sanitize=False
     ):
         """ Add a parameter to the parser
 
@@ -49,6 +60,7 @@ class Parser(AbsParser):
             required (bool): Whether or not the param may be omitted
             choices (container): A container of the allowable values for the argument
             default: The value produced if the argument is absent from the params
+            sanitize (bool): If true, sanitize the input
         """
 
         # Check type
@@ -73,6 +85,7 @@ class Parser(AbsParser):
             required=required,
             default=default,
             choices=choices,
+            sanitize=sanitize
         )
 
         if name in self.params:
@@ -88,43 +101,48 @@ class Parser(AbsParser):
         if not data:
             data = {}
 
-        for name, arg in self.params.items():
+        for name, param in self.params.items():
 
-            value = data.get(arg.name, None)
+            value = data.get(param.name, None)
 
             if not value:
                 value = None
 
             # Check choices
-            if arg.choices:
-                if value not in arg.choices and value is not None:
-                    raise ParserInvalidChoiceError(f"Value '{value}' not in choices")
+            if param.choices:
+                if value not in param.choices and value is not None:
+                    raise ParserInvalidChoiceError(f"Parameter '{value}' not in choices")
 
             # Check required
-            if arg.required and value is None:
-                raise ParserParamRequiredError(f"Missing required value for {arg.name}")
+            if param.required and value is None:
+                raise ParserParamRequiredError(f"Missing required parameter '{param.name}'")
 
             # Check value type
-            if value and arg.type and type(value) != arg.type:
+            if value and param.type and type(value) != param.type:
                 try:
-                    arg.type(value)
+                    param.type(value)
                 except Exception:
                     raise ParserTypeError(
-                        f"Incorrect type ({type(value)}) for {arg.name}"
+                        f"Incorrect type ({type(value)}) for {param.name}"
                     )
 
+            # Sanitize values
+            if self.sanitizer and param.sanitize:
+                if not type(value) in (int, float, None):
+                    value = json.loads(self.sanitizer(json.dumps(value)))
+
             # Set the parser attribute
-            if arg.default and not value:
-                setattr(self, arg.name, arg.default)
-                setattr(params, arg.name, arg.default)
-                params.add_param(arg.name)
-            elif arg.dest:
-                setattr(self, arg.dest, value)
-                setattr(params, arg.dest, value)
-                params.add_param(arg.name)
+            if param.default and not value:
+                setattr(self, param.name, param.default)
+                setattr(params, param.name, param.default)
+                params.add_param(param.name)
+            elif param.dest:
+                setattr(self, param.dest, value)
+                setattr(params, param.dest, value)
+                params.add_param(param.name)
             else:
-                setattr(self, arg.name, value)
-                setattr(params, arg.name, value)
-                params.add_param(arg.name)
+                setattr(self, param.name, value)
+                setattr(params, param.name, value)
+                params.add_param(param.name)
 
         return params

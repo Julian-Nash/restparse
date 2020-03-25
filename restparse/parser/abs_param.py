@@ -13,6 +13,7 @@ class AbsParam(abc.ABC):
         required=False,
         choices=None,
         default=None,
+        sanitize=False
     ):
         self.name = name
         self.type = type
@@ -21,6 +22,7 @@ class AbsParam(abc.ABC):
         self.required = required
         self.choices = choices
         self.default = default
+        self.sanitize = sanitize
 
     def __repr__(self):
         return (

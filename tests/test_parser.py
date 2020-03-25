@@ -8,8 +8,34 @@ from restparse.parser.exceptions import (
     DuplicateParamError
 )
 
+import bleach
+
 
 class TestParser(unittest.TestCase):
+
+    def test_sanitize_str(self):
+
+        parser = Parser(sanitizer=bleach.clean)
+        parser.add_param(
+            "data",
+            type=str,
+            sanitize=True
+        )
+        params = parser.parse_params({"data": "<script>alert('xss')</script>"})
+
+        self.assertEqual(params.data, "&lt;script&gt;alert('xss')&lt;/script&gt;")
+
+    def test_sanitize_list(self):
+
+        parser = Parser(sanitizer=bleach.clean)
+        parser.add_param(
+            "data",
+            type=list,
+            sanitize=True
+        )
+        params = parser.parse_params({"data": [1, 2, 3, "<script>alert('xss')</script>", [5]]})
+
+        self.assertEqual(params.data, [1, 2, 3, "&lt;script&gt;alert('xss')&lt;/script&gt;", [5]])
 
     def test_empty_parser(self):
 

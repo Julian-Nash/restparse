@@ -13,6 +13,7 @@ class Param(AbsParam):
         required=False,
         default=None,
         choices=None,
+        sanitize=False
     ):
         """ Returns a new instance of Arg:
 
@@ -34,4 +35,5 @@ class Param(AbsParam):
             required=required,
             default=default,
             choices=choices,
+            sanitize=sanitize
         )
