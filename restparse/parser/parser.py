@@ -97,7 +97,7 @@ class Parser(object):
 
             value = data.get(param.name, None)
 
-            if not value:
+            if value == "":
                 value = None
 
             if param.action:
@@ -126,7 +126,7 @@ class Parser(object):
                     )
 
             # Set the params attribute
-            if param.default and not value:
+            if param.default and value is None:
                 setattr(params, param.name, param.default)
                 params._add_param(param.name)
             elif param.dest:

@@ -15,23 +15,23 @@ class TestParser(unittest.TestCase):
             return s.upper()
 
         parser = Parser()
-        parser.add_param(
-            "name",
-            type=str,
-            action=upper
-        )
+        parser.add_param("name", type=str, action=upper)
         params = parser.parse_params({"name": "bob"})
 
         self.assertEqual(params.name, "BOB")
 
+    def test_parser_returns_false_when_value_is_none(self):
+
+        parser = Parser()
+        parser.add_param("supported", type=bool)
+        params = parser.parse_params({"supported": False})
+
+        self.assertFalse(params.supported)
+
     def test_param_action_cast_str_to_int(self):
 
         parser = Parser()
-        parser.add_param(
-            "number",
-            type=str,
-            action=int
-        )
+        parser.add_param("number", type=str, action=int)
         params = parser.parse_params({"number": "1"})
 
         self.assertEqual(params.number, 1)
