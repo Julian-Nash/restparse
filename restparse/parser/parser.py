@@ -119,7 +119,7 @@ class Parser(object):
             # Check value type
             if value and param.type and type(value) != param.type:
                 try:
-                    param.type(value)
+                    value = param.type(value)
                 except Exception:
                     raise ParserTypeError(
                         f"Incorrect type ({type(value)}) for {param.name}"
