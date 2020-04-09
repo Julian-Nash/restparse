@@ -28,6 +28,14 @@ class TestParser(unittest.TestCase):
 
         self.assertFalse(params.supported)
 
+    def test_parser_returns_true_with_true_val(self):
+
+        parser = Parser()
+        parser.add_param("supported", type=bool)
+        params = parser.parse_params({"supported": True})
+
+        self.assertTrue(params.supported)
+
     def test_param_action_cast_str_to_int(self):
 
         parser = Parser()
