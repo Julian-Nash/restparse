@@ -1,3 +1,5 @@
+from typing import Optional, Collection, Any
+
 from .param import Param
 from .params import Params
 from .exceptions import (
@@ -12,7 +14,7 @@ from string import Template
 class Parser(object):
     """ Parser class """
 
-    def __init__(self, description=None, allowed_types=None):
+    def __init__(self, description: Optional[str] = None, allowed_types: Optional[Collection] = None):
         """ Returns an instance of Parser
 
         Args:
@@ -85,9 +87,10 @@ class Parser(object):
         else:
             self.params[name] = a
 
-    def parse_params(self, data=None):
-        """ Parse a dict """
+    def parse_params(self, data: dict = None, allow_all: Optional[bool] = False) -> Params:
+        """ Parses a dict into param objects """
 
+        raw_data = data
         params = Params()
 
         if not data:
@@ -95,13 +98,10 @@ class Parser(object):
 
         for name, param in self.params.items():
 
-            value = data.get(param.name, None)
+            value: Any = data.get(param.name, None)
 
             if value == "":
                 value = None
-
-            if param.action:
-                value = param.action(value)
 
             # Check choices
             if param.choices:
@@ -125,16 +125,26 @@ class Parser(object):
                         f"Incorrect type ({type(value)}) for {param.name}"
                     )
 
+            # Perform any actions
+            if param.action and value:
+                value = param.action(value)
+
             # Set the params attribute
             if param.default and value is None:
                 setattr(params, param.name, param.default)
-                params._add_param(param.name)
+                params.add_param(param.name)
             elif param.dest:
                 setattr(params, param.dest, value)
-                params._add_param(param.name)
+                params.add_param(param.name)
             else:
                 setattr(params, param.name, value)
-                params._add_param(param.name)
+                params.add_param(param.name)
+
+        if allow_all:
+            for k, v in raw_data.items():
+                if k not in params.params:
+                    setattr(params, k, v)
+                    params.add_param(k)
 
         return params
 

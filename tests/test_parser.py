@@ -20,6 +20,22 @@ class TestParser(unittest.TestCase):
 
         self.assertEqual(params.name, "BOB")
 
+    def test_parser_handles_action_on_none_value(self):
+
+        parser = Parser()
+        parser.add_param("supported", type=str, action=lambda x: x.upper())
+        params = parser.parse_params({"foo": False})
+
+        self.assertEqual(params.supported, None)
+
+    def test_parser_handles_allow_any(self):
+
+        parser = Parser()
+        parser.add_param("supported", type=str)
+        params = parser.parse_params({"foo": "bar"}, allow_all=True)
+
+        self.assertEqual(params.foo, "bar")
+
     def test_parser_returns_false_when_value_is_none(self):
 
         parser = Parser()
