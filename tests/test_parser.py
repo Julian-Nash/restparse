@@ -217,6 +217,25 @@ class TestParser(unittest.TestCase):
 
         self.assertEqual(params.foo, None)
 
+    def test_defined_params(self):
+
+        parser = Parser()
+
+        parser.add_param("name", type=str)
+        params = parser.parse_params({"name": "bob", "age": 23}, allow_all=True)
+
+        self.assertEqual(params.defined_params, {"name"})
+
+    def test_undefined_params(self):
+
+        parser = Parser()
+
+        parser.add_param("name", type=str)
+        params = parser.parse_params({"name": "bob", "age": 23}, allow_all=True)
+
+        self.assertEqual(params.undefined_params, {"age"})
+
+
 
 if __name__ == "__main__":
     unittest.main()

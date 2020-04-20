@@ -145,6 +145,7 @@ class Parser(object):
                 if k not in params.params:
                     setattr(params, k, v)
                     params.add_param(k)
+                    params.add_undefined_param(k)
 
         return params
 
